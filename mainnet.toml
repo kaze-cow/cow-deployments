@@ -1,9 +1,24 @@
+#:schema https://raw.githubusercontent.com/usecannon/cannon/refs/heads/dev/packages/lsp/src/schema.json
+
 name = "cow-omnibus"
 version = "0.1.0"
+
+[var.addresses]
+solvers = """
+0x6789678967896789678967896789678967896789
+0x3456345634563456345634563456345634563456
+"""
+
+wrappers = """
+0x1234123412341234123412341234123412341234
+0x2345234523452345234523452345234523452345
+"""
 
 [clone.settlement]
 source = "cow-settlement:2.0.0"
 target = "cow-settlement:2.0.0"
+options.owner = "0x5002Ee88591876C148443cdED7a6D2e466B0147a"
+options.manager = "0x5002Ee88591876C148443cdED7a6D2e466B0147a"
 
 [clone.ethflow]
 source = "cow-ethflow:1.0.0"
@@ -11,3 +26,32 @@ target = "cow-ethflow:1.0.0"
 options.wrappedNativeToken = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
 
 depends = ["clone.settlement"]
+
+[invoke.addSolverBarter]
+target = "settlement.Authenticator"
+abi = "<%= JSON.stringify(settlement.AuthenticatorImplementation.abi) %>"
+fromCall.func = "manager"
+func = "addSolver"
+args = ["0x6789678967896789678967896789678967896789"]
+
+[invoke.addSolverPortus]
+target = "settlement.Authenticator"
+abi = "<%= JSON.stringify(settlement.AuthenticatorImplementation.abi) %>"
+fromCall.func = "manager"
+func = "addSolver"
+args = ["0x3456345634563456345634563456345634563456"]
+
+
+[invoke.addWrapperEulerOpenPosition]
+target = "settlement.Authenticator"
+abi = "<%= JSON.stringify(settlement.AuthenticatorImplementation.abi) %>"
+fromCall.func = "manager"
+func = "addSolver"
+args = ["0x1234123412341234123412341234123412341234"]
+
+[invoke.addWrapperEulerClosePosition]
+target = "settlement.Authenticator"
+abi = "<%= JSON.stringify(settlement.AuthenticatorImplementation.abi) %>"
+fromCall.func = "manager"
+func = "addSolver"
+args = ["0x2345234523452345234523452345234523452345"]
