@@ -1,0 +1,13 @@
+name = "cow-omnibus"
+version = "0.1.0"
+
+[clone.settlement]
+source = "cow-settlement:2.0.0"
+target = "cow-settlement:2.0.0"
+
+[clone.ethflow]
+source = "cow-ethflow:1.0.0"
+target = "cow-ethflow:1.0.0"
+options.wrappedNativeToken = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
+
+depends = ["clone.settlement"]
