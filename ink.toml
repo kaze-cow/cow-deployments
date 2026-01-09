@@ -5,7 +5,7 @@ version = "0.1.0"
 
 [var.main]
 salt = "Futons in Tokyo!"
-wrappedNativeToken = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
+wrappedNativeToken = "0x4200000000000000000000000000000000000006"
 
 
 initialOwner = "0x5002Ee88591876C148443cdED7a6D2e466B0147a"
@@ -25,6 +25,7 @@ options.manager = "<%= settings.initialManager %>"
 source = "cow-ethflow:1.0.2"
 target = "cow-ethflow:1.0.2"
 options.wrappedNativeToken = "<%= settings.wrappedNativeToken %>"
+options.cowSettlement = "0x9008D19f58AAbD9eD0D60971565AA8510560ab41"
 
 depends = ["clone.settlement"]
 
@@ -37,13 +38,13 @@ target = "cow-helpers:1.0.0"
 source = "cow-hooks-trampoline:1.0.0"
 target = "cow-hooks-trampoline:1.0.0"
 #options.salt = "<%= settings.salt %>"
-options.cowSettlement = "<%= settlement.Settlement.address %>"
+options.cowSettlement = "0x9008D19f58AAbD9eD0D60971565AA8510560ab41"
 
 [clone.composableCow]
 source = "cow-composable:1.0.0"
 target = "cow-composable:1.0.0"
-options.salt = "<%= settings.salt %>"
-#options.cowSettlement = "<%= settlement.Settlement.address %>"
+#options.salt = "<%= settings.salt %>"
+options.cowSettlement = "0x9008D19f58AAbD9eD0D60971565AA8510560ab41"
 depends = ["clone.settlement"]
 
 [clone.shed]
@@ -51,6 +52,7 @@ source = "cow-shed:1.0.0"
 target = "cow-shed:1.0.0"
 #options.salt = "<%= settings.salt %>"
 options.composableCow = "<%= composableCow.ComposableCoW.address %>"
+options.cowSettlement = "0x9008D19f58AAbD9eD0D60971565AA8510560ab41"
 
 [clone.vouchRegister]
 source = "cow-vouch-register:1.0.0"
@@ -61,12 +63,15 @@ target = "cow-vouch-register:1.0.0"
 source = "cow-flash-loan-router:1.0.0"
 target = "cow-flash-loan-router:1.0.0"
 #options.salt = "<%= settings.salt %>"
-options.cowSettlement = "<%= settlement.Settlement.address %>"
+options.cowSettlement = "0x9008D19f58AAbD9eD0D60971565AA8510560ab41"
+
+depends = ["clone.settlement"]
 
 [clone.fee]
 source = "cow-fee:1.0.0"
 target = "cow-fee:1.0.0"
 options.wrappedNativeToken = "<%= settings.wrappedNativeToken %>"
+options.cowSettlement = "0x9008D19f58AAbD9eD0D60971565AA8510560ab41"
 
 depends = ["clone.settlement"]
 
