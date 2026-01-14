@@ -1,0 +1,80 @@
+#:schema https://raw.githubusercontent.com/usecannon/cannon/refs/heads/dev/packages/lsp/src/schema.json
+
+# deployment for INK network https://inkonchain.com
+
+name = "cow-omnibus"
+version = "0.1.0"
+
+include = [
+    "shared/team-safes.toml"
+]
+
+[var.main]
+wrappedNativeToken = "0x4200000000000000000000000000000000000006"
+initialOwner = "0x6Fb5916c0f57f88004d5b5EB25f6f4D77353a1eD"
+initialManager = "0x6Fb5916c0f57f88004d5b5EB25f6f4D77353a1eD"
+
+[clone.settlement]
+source = "cow-settlement:2.0.2"
+target = "cow-settlement:2.0.2"
+options.owner = "<%= settings.initialOwner %>"
+options.manager = "<%= settings.initialManager %>"
+
+[clone.ethflow]
+source = "cow-ethflow:1.0.2"
+target = "cow-ethflow:1.0.2"
+options.wrappedNativeToken = "<%= settings.wrappedNativeToken %>"
+options.cowSettlement = "0x9008D19f58AAbD9eD0D60971565AA8510560ab41"
+
+depends = ["clone.settlement"]
+
+[clone.helpers]
+source = "cow-helpers:1.0.0"
+target = "cow-helpers:1.0.0"
+
+[clone.trampoline]
+source = "cow-hooks-trampoline:1.0.0"
+target = "cow-hooks-trampoline:1.0.0"
+
+[clone.composableCow]
+source = "cow-composable:1.0.0"
+target = "cow-composable:1.0.0"
+depends = ["clone.settlement"]
+
+[clone.shed]
+source = "cow-shed:2.0.0"
+target = "cow-shed:2.0.0"
+options.composableCow = ""
+
+[clone.vouchRegister]
+source = "cow-vouch-register:1.0.0"
+target = "cow-vouch-register:1.0.0"
+
+[clone.flashLoanRouter]
+source = "cow-flash-loan-router:1.0.0"
+target = "cow-flash-loan-router:1.0.0"
+
+depends = ["clone.settlement"]
+
+[clone.fee]
+source = "cow-fee:1.0.0"
+target = "cow-fee:1.0.0"
+options.wrappedNativeToken = "<%= settings.wrappedNativeToken %>"
+
+depends = ["clone.settlement"]
+
+[invoke.setAuthenticatorManager]
+target = "settlement.Authenticator"
+from = "<%= settings.initialOwner %>"
+func = "setManager"
+args = ["<%= settings.currentManager %>"]
+
+# cannon issue: its not possible to do this due to ABI insufficiency
+#[invoke.setAuthenticatorOwner]
+#target = "settlement.Authenticator"
+#from = "<%= settings.initialOwner %>"
+#func = "setAdmin"
+#args = ["<%= settings.currentOwner %>"]
+
+# having this dependency prevents needing to control both the `settings.currentOwner`, reducing a required signer for deployment.
+#depends = ["invoke.setAuthenticatorManager"]

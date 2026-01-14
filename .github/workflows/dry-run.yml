@@ -1,0 +1,32 @@
+name: Dry Run Deployments
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  demo:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        toml-file:
+          # add every deployment we want to keep verified to this list here
+          - 57073-main.toml
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract chainId and preset
+        id: extract
+        run: |
+          filename="${{ matrix.toml-file }}"
+          # Remove .toml extension and split by dash
+          base="${filename%.toml}"
+          chainId="${base%-*}"
+          preset="${base##*-}"
+          echo "chainId=$chainId" >> $GITHUB_OUTPUT
+          echo "preset=$preset" >> $GITHUB_OUTPUT
+
+      - name: Run demo.sh
+        run: ./demo.sh ${{ steps.extract.outputs.chainId }} ${{ steps.extract.outputs.preset }}
