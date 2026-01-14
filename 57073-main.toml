@@ -35,6 +35,7 @@ target = "cow-helpers:1.0.0"
 [clone.trampoline]
 source = "cow-hooks-trampoline:1.0.0"
 target = "cow-hooks-trampoline:1.0.0"
+options.cowSettlement = '<%= settlement.Settlement.address %>'
 
 [clone.composableCow]
 source = "cow-composable:1.0.0"
@@ -42,9 +43,9 @@ target = "cow-composable:1.0.0"
 depends = ["clone.settlement"]
 
 [clone.shed]
-source = "cow-shed:2.0.0"
-target = "cow-shed:2.0.0"
-options.composableCow = ""
+source = "cow-shed:1.0.1"
+target = "cow-shed:1.0.1"
+options.composableCow = "0xfdaFc9d1902f4e0b84f65F49f244b32b31013b74"
 
 [clone.vouchRegister]
 source = "cow-vouch-register:1.0.0"
@@ -62,12 +63,6 @@ target = "cow-fee:1.0.0"
 options.wrappedNativeToken = "<%= settings.wrappedNativeToken %>"
 
 depends = ["clone.settlement"]
-
-[invoke.setAuthenticatorManager]
-target = "settlement.Authenticator"
-from = "<%= settings.initialOwner %>"
-func = "setManager"
-args = ["<%= settings.currentManager %>"]
 
 # cannon issue: its not possible to do this due to ABI insufficiency
 #[invoke.setAuthenticatorOwner]
