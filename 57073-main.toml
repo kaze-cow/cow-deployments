@@ -5,9 +5,9 @@
 name = "cow-omnibus"
 version = "0.1.0"
 
-include = [
-    "shared/team-safes.toml"
-]
+#include = [
+#    "shared/team-safes.toml"
+#]
 
 [var.main]
 wrappedNativeToken = "0x4200000000000000000000000000000000000006"
