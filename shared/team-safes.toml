@@ -1,0 +1,48 @@
+# Include this file to deploy all necessary production Safes.
+# If a safe is already deployed by another party, it may be necessary to disable the deployment here
+# to prevent errors within cannon by executing `cannon alter` command.
+
+# ensure the safe contracts are deployed if they aren't already
+[clone.safeImpl130]
+source = "safe-impl:1.3.0"
+target = "cow-safe-impl:1.3.0"
+
+# ensure the safe contracts are deployed if they aren't already
+[clone.safeImpl141]
+source = "safe-impl:1.4.1"
+target = "cow-safe-impl:1.4.1"
+
+# creates a gnosis safe at 0x423cec87f19f0778f549846e0801ee267a917935
+[clone.safeTeam]
+source = "safe:1.3.0"
+target = "cow-safe:1.3.0@team"
+options.safeImplPackage = "cow-safe-impl:1.3.0"
+options.owners = "0xc3792470cee7e0d42c2be8e9552bd651766c5178,0x34872330f5d08c18dd0ef3cb4dd8908104f3763b"
+options.salt = "1651491025951"
+
+depends = ["clone.safeImpl130"]
+
+# creates a gnosis safe at 0xA03be496e67Ec29bC62F01a428683D7F9c204930
+[clone.safePayouts]
+source = "safe:1.3.0"
+target = "cow-safe:1.3.0@payouts"
+options.safeImplPackage = "cow-safe-impl:1.3.0"
+options.owners = "0xc3792470cee7e0D42C2Be8e9552bd651766c5178,0xf6d3a588dF6C4eEe8F095CbcCDBDACccCBf59A18,0x34872330F5D08C18dd0ef3CB4Dd8908104F3763B,0x247b317521D7edCfaf9B6D6C21B55217E5c34E0a,0x76bA9825A5F707F133124E4608F1F2Dd1EF4006a,0x3681c9210a7C3c20D1dbE3597B932F0A700aECa5,0xdBC682D0eC19bd276Fd6C2af4E0189B584BB31E1,0xCF89198fb5f37C98516bC36c6111a431ff7457b2,0x89E4042fD85e857e81a4Fa89831b1f5Ad4f384B7,0x7E292c89c1aF2867f6B1af45e5AFbA5C7d28c83D,0x3E8B27Fd72fE367665e3E1c217370637Acb8cEdA,0xd8Ca5FE380b68171155C7069B8df166db28befdd"
+options.threshold = "4"
+options.salt = "1646214932684"
+
+depends = ["clone.safeImpl130"]
+
+# creates a gnosis safe at 0x717e745040b9a486f2254659E8EA7Dc7d9a72A1e
+[clone.safeVouch]
+source = "safe:1.4.1"
+target = "cow-safe:1.4.1@vouch"
+options.safeImplPackage = "cow-safe-impl:1.4.1"
+options.owners = "0x2CaEf7f0EE82fb0ABf1AB0dCD3A093803002e705,0x1B775D39919caf5D74A4aE33B01a6db498BBefad,0x7B2e78D4dFaABA045A167a70dA285E30E8FcA196,0xd295FB1f2DD5A25e3CF44eC073247d500CFBB96C"
+options.threshold = "2"
+options.initTo = "0xBD89A1CE4DDe368FFAB0eC35506eEcE0b1fFdc54"
+options.initData = "0xfe51f64300000000000000000000000029fcb43b46531bca003ddc8fcb67ffe91900c762"
+options.paymentReceiver = "0x5afe7A11E7000000000000000000000000000000"
+options.salt = "0"
+
+depends = ["clone.safeImpl141"]
