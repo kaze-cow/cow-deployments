@@ -1,0 +1,84 @@
+name: Dry Run Deployments
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # Job 1: Collect the list of buildable releases
+  collect_buildable_deploys:
+    runs-on: ubuntu-latest
+    outputs:
+      dirs: ${{ steps.dirs.outputs.dirs }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: List TOML files and format as JSON
+        id: dirs
+        run: |
+          # The 'ls -d projects/*/ |' command lists all subdirectories
+          # 'jq' formats the output as a JSON array (e.g., ["1-main.toml", "2-main.toml"])
+          # '>> ${GITHUB_OUTPUT}' sets the value as a job output
+          echo "deploys=$(ls -d *.toml | jq --raw-input --slurp --compact-output 'split("\n")')" >> ${GITHUB_OUTPUT}
+
+  # Job 2: Actually simulate the deployment and ensure the deployment files are synced
+  verify_deploy:
+    needs: collect_buildable_deploys
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        toml-file: ${{ fromJson(needs.collect_buildable_deploys.deploys) }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "pnpm"
+      - name: Install dependencies
+        run: pnpm install
+
+
+      - name: Extract chainId and preset
+        id: extract
+        run: |
+          filename="${{ matrix.toml-file }}"
+          # Remove .toml extension and split by dash
+          base="${filename%.toml}"
+          chainId="${base%-*}"
+          preset="${base##*-}"
+          echo "chainId=$chainId" >> $GITHUB_OUTPUT
+          echo "preset=$preset" >> $GITHUB_OUTPUT
+
+      - name: Run test build
+        run: pnpm cannon build ${{ steps.extract.outputs.chainId }}-${{ steps.extract.outputs.preset }}.toml --chain-id ${{ steps.extract.outputs.chainId }} --dry-run --impersonate 0x05C5494572E4aB2d48D3AB3aAF6bD4e7b1c98382 --write-deployments ci_deployments/${{ steps.extract.outputs.chainId }}/${{ steps.extract.outputs.preset }}
+      - name: Compare built deploy artifacts
+        run: diff -Naur deployments/${{ steps.extract.outputs.chainId }}/${{ steps.extract.outputs.preset }} ci_deployments/${{ steps.extract.outputs.chainId }}/${{ steps.extract.outputs.preset }}
+  # Job 3: Lint
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "pnpm"
+      - name: Install dependencies
+        run: pnpm install
+      - name: Lint
+        # This will confirm schema compliance as well as general toml syntax validity
+        run: pnpm taplo lint
+      - name: Format
+        # This will ensure a consistant/standardized format
+        run: pnpm taplo fmt
+
